@@ -3,22 +3,29 @@ import numpy as np
 
 def color_correction():
 	# woman
-	image_1 = cv2.imread('./A1/Q1I1.png')
+	woman_image = cv2.imread('./A1/Q1I1.png')
 
 	b = 70 # brightness
 	c = 80  # contrast
 
-	brighter_image_1 = cv2.addWeighted(image_1, 1. + c/127., image_1, 0, b-c)
 
-	# brighter_image_1 = cv2.addWeighted(image_1, 1.0, image_1, 0.8, 0)
+	image_hsv = cv2.cvtColor(woman_image, cv2.COLOR_BGR2HSV)
+	h, s, v = cv2.split(image_hsv)
+	v += 25
+	final_hsv = cv2.merge((h, s, v))
+
+	brighter_woman_image = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
+
+	# brighter_woman_image = cv2.addWeighted(woman_image, 1.0, woman_image, 0.8, 0)
+	cv2.imwrite('./output/woman_brighter.png',brighter_woman_image)
 
 
 	# batman
 	image_2 = cv2.imread('./A1/Q1I2.jpg')
 
 	image_2_inverted = cv2.imread('./A1/Q1I2.jpg')
-	image_2 = cv2.resize(image_2, (brighter_image_1.shape[1], brighter_image_1.shape[0]))
-	image_2_inverted = cv2.resize(image_2_inverted, (brighter_image_1.shape[1], brighter_image_1.shape[0]))
+	image_2 = cv2.resize(image_2, (brighter_woman_image.shape[1], brighter_woman_image.shape[0]))
+	image_2_inverted = cv2.resize(image_2_inverted, (brighter_woman_image.shape[1], brighter_woman_image.shape[0]))
 
 
 
@@ -35,7 +42,7 @@ def color_correction():
 
 
 	# merge batman and woman
-	image_4 = cv2.addWeighted(brighter_image_1,1.0,image_2_inverted,0.5,0)
+	image_4 = cv2.addWeighted(brighter_woman_image,1.0,image_2_inverted,0.5,0)
 
 	cv2.imwrite('./output/image_4.png',image_4)
 
