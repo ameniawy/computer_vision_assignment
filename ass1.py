@@ -1,40 +1,38 @@
 import cv2
-import numpy as np 
+import numpy as np
+
+def gamma_correction(image, gamma = 2):
+	invGamma = 1.0 / gamma
+   	table = np.array([
+      ((i / 255.0) ** invGamma) * 255
+      for i in np.arange(0, 256)])
+	
+	return cv2.LUT(image.astype(np.uint8), table.astype(np.uint8))
+
+def addWeights(image, brightness, contrast):
+	# https://stackoverflow.com/questions/39308030/how-do-i-increase-the-contrast-of-an-image-in-python-opencv
+	return cv2.addWeighted(image, 1. + contrast/127., image, 0, brightness-contrast)
 
 def color_correction():
-	# woman
+	# reading images
 	woman_image = cv2.imread('./A1/Q1I1.png')
+	batman_image = cv2.imread('./A1/Q1I2.jpg')
 
-	b = 70 # brightness
-	c = 80  # contrast
+	brighter_woman_image = gamma_correction(woman_image)
+	contrast_woman_image = addWeights(brighter_woman_image, 40, 120)
 
-
-	image_hsv = cv2.cvtColor(woman_image, cv2.COLOR_BGR2HSV)
-	h, s, v = cv2.split(image_hsv)
-	v += 25
-	final_hsv = cv2.merge((h, s, v))
-
-	brighter_woman_image = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2BGR)
-
-	# brighter_woman_image = cv2.addWeighted(woman_image, 1.0, woman_image, 0.8, 0)
-	cv2.imwrite('./output/woman_brighter.png',brighter_woman_image)
-
-
-	# batman
-	image_2 = cv2.imread('./A1/Q1I2.jpg')
+	cv2.imwrite('./output/woman_contrast.png', contrast_woman_image)
 
 	image_2_inverted = cv2.imread('./A1/Q1I2.jpg')
-	image_2 = cv2.resize(image_2, (brighter_woman_image.shape[1], brighter_woman_image.shape[0]))
-	image_2_inverted = cv2.resize(image_2_inverted, (brighter_woman_image.shape[1], brighter_woman_image.shape[0]))
+	batman_image = cv2.resize(batman_image, (contrast_woman_image.shape[1], contrast_woman_image.shape[0]))
+	image_2_inverted = cv2.resize(image_2_inverted, (contrast_woman_image.shape[1], contrast_woman_image.shape[0]))
 
-
-
-	image_2_row, image_2_col, channels_2 = image_2.shape
+	image_2_row, image_2_col, channels_2 = batman_image.shape
 
 	# flip image
 	for i in range(image_2_row):
 		for j in range(image_2_col):
-			image_2_inverted[i, image_2_col - j - 1] = image_2[i, j]
+			image_2_inverted[i, image_2_col - j - 1] = batman_image[i, j]
 
 	# translate batman a bit to the right
 	translationMatrix = np.float32([[1,0,250],[0,1,0]])
@@ -42,7 +40,7 @@ def color_correction():
 
 
 	# merge batman and woman
-	image_4 = cv2.addWeighted(brighter_woman_image,1.0,image_2_inverted,0.5,0)
+	image_4 = cv2.addWeighted(contrast_woman_image,1.0,image_2_inverted,0.5,0)
 
 	cv2.imwrite('./output/image_4.png',image_4)
 
