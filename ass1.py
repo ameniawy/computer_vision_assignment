@@ -54,7 +54,7 @@ def fitting_frames():
 	# hardcoded from image editor
 	sherlock_corners = np.float32([[0, 0], [sherlock.shape[1], 0], [sherlock.shape[1], sherlock.shape[0]]])
 	sherlock_corners_four = np.float32([[0,0], [sherlock.shape[1],0], [sherlock.shape[1], sherlock.shape[0]], [0, sherlock.shape[0]]])
-	frame_three_corners = np.float32([[1219, 377], [1310, 380], [1310, 517]])
+	frame_three_corners = np.float32([[1219, 378], [1310, 380], [1310, 517]])
 	frame_four_corners = np.float32([[1219, 378], [1310, 378], [1310, 515], [1219, 515]])
 
 	affine = cv2.getAffineTransform(sherlock_corners, frame_three_corners)
