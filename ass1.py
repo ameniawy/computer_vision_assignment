@@ -116,9 +116,6 @@ def fitting_frames():
 def main():
     color_correction()
     fitting_frames()
-    # cv2.imshow('image_2_inverted', output)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
