@@ -27,10 +27,13 @@ def color_correction():
 
     cv2.imwrite('./output/woman_contrast.png', contrast_woman_image)
 
+    # batman_image = cv2.resize(batman_image,None,fx=0.7, fy=1, interpolation = cv2.INTER_CUBIC)
     batman_image = cv2.resize(
         batman_image, (contrast_woman_image.shape[1], contrast_woman_image.shape[0]))
+
     batman_image_inverted = cv2.resize(
         batman_image_inverted, (contrast_woman_image.shape[1], contrast_woman_image.shape[0]))
+
 
     image_2_row, image_2_col, channels_2 = batman_image.shape
 
@@ -54,12 +57,12 @@ def color_correction():
 
 
 def fitting_frames():
+    # https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_imgproc/py_geometric_transformations/py_geometric_transformations.html
     # read images
     sherlock = cv2.imread('./A1/Q2I1.jpg')
     frame_fig_6 = cv2.imread('./A1/Q2I2.jpg')
     frame_fig_7 = cv2.imread('./A1/Q2I3.jpg')
     frame_fig_10 = cv2.imread('./A1/Q3I1.jpg')
-    # print(sherlock.shape)
 
     # get corners
     # hardcoded from image editor
@@ -71,6 +74,7 @@ def fitting_frames():
     frame_four_corners = np.float32(
         [[1219, 378], [1310, 378], [1310, 515], [1219, 515]])
 
+    # transformation matrix
     affine = cv2.getAffineTransform(sherlock_corners, frame_three_corners)
     sherlock_new_1 = cv2.warpAffine(
         sherlock, affine, (frame_fig_6.shape[1], frame_fig_6.shape[0]))
@@ -78,7 +82,6 @@ def fitting_frames():
 
     image_7 = cv2.addWeighted(frame_fig_6, 1.0, sherlock_new_1, 1.0, 0)
 
-    # cv2.imshow('image_2_inverted', image_8)
     cv2.imwrite('./output/image_7.png', image_7)
 
     # Q2
@@ -93,13 +96,12 @@ def fitting_frames():
 
     image_9 = cv2.addWeighted(frame_fig_7, 1.0, sherlock_new_2, 1.0, 0)
 
-    # cv2.imshow('image_2_inverted', image_10)
     cv2.imwrite('./output/image_9.png', image_9)
 
     # Q3
 
     frame_four_corners_3 = np.float32(
-        [[165, 38], [469, 71], [463, 353], [161, 388]])
+        [[164, 36], [469, 70], [464, 353], [158, 389]])
 
     perspective = cv2.getPerspectiveTransform(
         sherlock_corners_four, frame_four_corners_3)
